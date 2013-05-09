@@ -7,26 +7,26 @@ The way this extension works is by rendering each individual view of your app in
 Your styleguide class must extend backbone.styleguide. The example below covers the three fundamental concepts behind a styleguide:
 
     MyStyleguide = Backbone.Styleguide.extend({
-      fixtures: {
+      fixtures: function() {
+        return {
           "user": new User({ id: 1, name: "john" }),
           "product": new Product({ id: 1, name: "Coke" })
-      }
-      calls: {
-        "/users/2": { id: 2, name: "Someone else" }
-      }
-      vews: {
-          { "Log in box": new Login({ model: fixtures['user'] },
-          { "Product thumbnail": new Thumbnail({ model: fixtures['product'] }
+        };
+      },
+
+      views: function() {
+        return {
+           "Log in box": new Login({ model: this.fixture('user') }),
+           "Thumbnails": [new ProductThumbnail({ model: this.fixture('product') }), new UserThumbnail({ model: this.fixture('user') })],
+           "Buttons": [ $("<input type='submit'></input>"), $("<input type='button'></input>") ]
+        };
       }
     });
 
-The **fixtures** property allows you to build a set of models and collections that can be used to build your views. It must return a collection of fixtures identified by name. To access one in a view, you can simply call it by name - e.g.: **fixtures['user']**
+The **fixtures** property allows you to build a set of models and collections that can be used to build your views. It must return a collection of fixtures identified by name.
+To access one in a view, you can simply call it by name - e.g.: **this.fixture('user')**
 
-The **calls** property allows you to control the data you want to display in views whose models/collections make server requests. In this case, you mock the json result of http calls by url. You can only mock **GET** requests.
-
-In both cases, the styleguide will warn when a fixture or callback is not being used by the views. Conversely, it will let you know of calls and models being used inside your rendere views and NOT mocked.
-
-Finally, the **views** property allows you to wire your views with any fixtures, as well as give them meaningful names. This is the list of views that will be used to build the styleguide. 
+The **views** property allows you to wire your views with any fixtures, as well as give them meaningful names. This is the list of views that will be used to build the styleguide. Notice you can render individual views (one after another), arrays of things and even plain jQuery objects!
 
 ###Accessing the styleguide
 The Backbone.Styleguide itself is nothing but a Backbone view: in order to view it, just create an instance and render on a route:
@@ -39,7 +39,8 @@ By default, the Backbone.Styleguide view will replace the content of your page's
         }
 
         styleguide: function() {
-            new MyStyleguide().render();
+            $("body").html(new MyStyleguide().render().$el);
         }
     });
+
 You can of course override that, by supplying a different 'el' on the constructor.

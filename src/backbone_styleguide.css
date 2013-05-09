@@ -1,0 +1,13 @@
+.backbone-styleguide-container {
+
+}
+
+.backbone-styleguide-container .backbone-styleguide-rendered {
+  padding: 10px;
+}
+
+.backbone-styleguide-container .backbone-styleguide-item {
+  padding: 10px;
+  border-top: 2px solid #d3d3d3;
+  clear: both;
+}
